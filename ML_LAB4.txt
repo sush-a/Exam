@@ -1,0 +1,26 @@
+from pandas import read_csv
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_predict
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.neural_network import MLPClassifier
+
+df=read_csv('Raisin.csv')
+array=df.values
+X=array[:,0:-1]
+Y=array[:,-1]
+kfold=KFold(n_splits=10,shuffle=True,random_state=0)
+
+model=MLPClassifier(hidden_layer_sizes=(10,9),activation='relu',shuffle=True,random_state=0,max_iter=100)
+result=cross_val_score(model,X,Y,cv=kfold,scoring='accuracy')
+print("Accuracy={:.2f}%".format(result.mean()*100))
+y_pred=cross_val_predict(model,X,Y,cv=kfold)
+conf_mat=confusion_matrix(Y,y_pred)
+print('\n',conf_mat)
+report=classification_report(Y,y_pred)
+print('\n',report)
+
+model=model.fit(X,Y)
+y_pred=model.predict([[142069,662.7137696,275.4396927,0.909536563,148697,0.732276687,1622.58]])
+print(y_pred)

@@ -1,0 +1,28 @@
+from pandas import read_csv
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_predict
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.naive_bayes import GaussianNB
+import warnings
+warnings.filterwarnings("ignore")
+
+df=read_csv('Pima_Indian.csv')
+array=df.values
+X=array[:,0:-1]
+Y=array[:,-1]
+kfold=KFold(n_splits=10,shuffle=True,random_state=0)
+
+model=GaussianNB()
+result=cross_val_score(model,X,Y,cv=kfold,scoring='accuracy')
+print("Accuracy={:.2f}%".format(result.mean()*100))
+y_pred=cross_val_predict(model,X,Y,cv=kfold)
+conf_mat=confusion_matrix(Y,y_pred)
+print('\n',conf_mat)
+report=classification_report(Y,y_pred)
+print('\n',report)
+
+model=model.fit(X,Y)
+y_pred=model.predict([[3,126,88,41,235,39.3,0.704,27]])
+print(y_pred)
